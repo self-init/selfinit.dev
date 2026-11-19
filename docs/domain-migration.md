@@ -4,7 +4,9 @@ Plan: make **selfinit.dev** the primary domain and permanently redirect
 **williamanderson.dev** to it (paths kept), using Cloudflare, where both
 domains' DNS already lives.
 
-Status: **not started** (planned 2026-11-17).
+Status: **in progress.** The new site deploys to selfinit.dev (step 2 below,
+set up 2026-11-18); williamanderson.dev still serves the old Docusaurus site
+until step 4.
 
 ## 1. Before switching: build changes
 
@@ -24,17 +26,21 @@ Status: **not started** (planned 2026-11-17).
     `185.199.110.153`, `185.199.111.153`
   - `AAAA` records for `@`: `2606:50c0:8000::153`, `2606:50c0:8001::153`,
     `2606:50c0:8002::153`, `2606:50c0:8003::153`
-  - `CNAME` `www` → `<your-github-username>.github.io`
+  - `CNAME` `www` → `self-init.github.io`
+- [ ] Repo: *Settings → Pages → Build and deployment → Source* =
+      **GitHub Actions** (the workflow in `.github/workflows/build.yml`
+      deploys every push to `main`).
 - [ ] Repo: *Settings → Pages → Custom domain* = `selfinit.dev`, then tick
       **Enforce HTTPS** once the certificate is issued. (Deploying with
       GitHub Actions, so no `CNAME` file is needed in the output.)
 
 ## 3. Switch the site over
 
-- [ ] `site.json`: `"url": "https://selfinit.dev"`. This updates canonical
+- [x] `site.json`: `"url": "https://selfinit.dev"`. This updates canonical
       links, Open Graph URLs, social card image URLs, the RSS feed, redirect
       pages and the domain printed on social cards.
-- [ ] Build, deploy, and check `https://selfinit.dev` works.
+- [ ] Push to `main` (the workflow builds and deploys), and check
+      `https://selfinit.dev` works.
 
 ## 4. Redirect williamanderson.dev
 

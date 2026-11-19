@@ -18,7 +18,7 @@ This covers:
   their folders, unless a post says otherwise.
 
 You may share and adapt it for any purpose, as long as you give appropriate
-credit (e.g. "William Anderson, self-init, williamanderson.dev"), link to the
+credit (e.g. "William Anderson, self-init, selfinit.dev"), link to the
 license, and indicate if changes were made.
 
 ## Not covered: all rights reserved

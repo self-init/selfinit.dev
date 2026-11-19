@@ -1,6 +1,6 @@
 # self-init
 
-Source for [self-init](https://williamanderson.dev), William Anderson's blog on
+Source for [self-init](https://selfinit.dev), William Anderson's blog on
 systems, security, and the things I build, and the small Python static site
 generator that builds it.
 

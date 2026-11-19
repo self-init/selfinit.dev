@@ -1,10 +1,23 @@
-name: Build site
+name: Build and deploy
 
+# Pull requests: build the site (which also checks every internal link) so
+# problems show up before merging. Pushes to main (and manual runs): build,
+# then publish to GitHub Pages at the custom domain set in the repo's Pages
+# settings (selfinit.dev).
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One deployment at a time; a newer push replaces a queued one, but a
+# deployment already running is allowed to finish.
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -19,10 +32,34 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked
 
+      # Generated images (social cards, thumbnails) are cached between runs;
+      # the build redraws whatever changed and drops what's no longer used.
+      - uses: actions/cache@v4
+        with:
+          path: .cache
+          key: images-${{ github.sha }}
+          restore-keys: images-
+
       - name: Build site
         run: uv run python build.py
 
-      - uses: actions/upload-artifact@v4
+      - name: Upload site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: site
           path: output/
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
