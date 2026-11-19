@@ -1,0 +1,20 @@
+{
+  "/blog/": "/",
+  "/blog/archive/": "/",
+  "/blog/authors/": "/",
+  "/blog/authors/william/": "/",
+
+  "/blog/gwj82thoughts/": "/2025-06-22/gwj82thoughts/",
+  "/blog/galaxymap/": "/2025-10-14/galaxymap/",
+  "/blog/homelab-setup/": "/2026-02-25/homelab-setup/",
+  "/blog/computercraft-os/": "/2026-10-22/computercraft-os/",
+  "/blog/migrating-to-typescript/": "/2026-10-28/migrating-to-typescript/",
+  "/blog/rcc-homelabbing-presentation/": "/2026-11-09/rcc-homelabbing-presentation/",
+
+  "/blog/tags/": "/tags/",
+  "/blog/tags/gamedev/": "/tags/gamedev/",
+  "/blog/tags/softwaredev/": "/tags/softwaredev/",
+  "/blog/tags/homelab/": "/tags/homelab/",
+  "/blog/tags/linux/": "/tags/linux/",
+  "/blog/tags/hecate/": "/tags/hecate/"
+}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m %}
+
+{% block title %}Entries tagged “{{ tag.name }}”{{ m.page_suffix(pagination) }} · {{ SITE.title }}{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Entries Tagged “{{ tag.name }}”</h1>
+{% if tag.description %}
+<p class="page-intro">{{ tag.description }}</p>
+{% endif %}
+{{ m.entries(pagination) }}
+{% endblock %}

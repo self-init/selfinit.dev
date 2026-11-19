@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Series · {{ SITE.title }}{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Series</h1>
+{% if SERIES %}
+<ul class="index-list">
+  {% for series in SERIES %}
+  <li>
+    <a href="{{ series.url }}">{{ series.name }}</a>
+    <span class="count">({{ series.posts | length }} post{{ '' if series.posts | length == 1 else 's' }}, latest <time datetime="{{ series.latest.iso_date }}">{{ series.latest.date | longdate }}</time>)</span>
+    {% if series.description %}<p class="index-list__description">{{ series.description }}</p>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No series yet.</p>
+{% endif %}
+{% endblock %}

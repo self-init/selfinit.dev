@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% set sidebar = page.model.sidebar %}
+
+{% block title %}{{ page.title }} · {{ SITE.title }}{% endblock %}
+
+{% block content %}
+<article class="entry entry--full entry--page">
+  <h1 class="entry__title">{{ page.title }}</h1>
+  <div class="prose">
+    {{ page.html }}
+  </div>
+</article>
+{% endblock %}

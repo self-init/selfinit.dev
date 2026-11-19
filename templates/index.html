@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m %}
+
+{% block title %}{{ SITE.title }}{{ m.page_suffix(pagination) }}{% endblock %}
+
+{% block content %}
+{{ m.entries(pagination) }}
+{% endblock %}

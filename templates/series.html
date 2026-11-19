@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% import "_macros.html" as m %}
+
+{% block title %}Series: {{ series.name }}{{ m.page_suffix(pagination) }} · {{ SITE.title }}{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Series: {{ series.name }}</h1>
+{% if series.description %}
+<p>{{ series.description }}</p>
+{% endif %}
+<p class="page-intro">{{ series.posts | length }} post{{ '' if series.posts | length == 1 else 's' }}, in reading order.</p>
+{{ m.entries(pagination, prev_label='Previous page', next_label='Next page') }}
+{% endblock %}

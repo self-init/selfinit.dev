@@ -1,0 +1,19 @@
+{# The About blurb: photo, bio, "More about me" and links (site.json
+   "about"). In the sidebar, or under posts when there's no sidebar. #}
+{% if ABOUT_PHOTO %}
+<img class="about__photo" src="{{ ABOUT_PHOTO }}" alt="Photo of {{ SITE.author }}"
+     width="{{ ABOUT_PHOTO_SIZE[0] }}" height="{{ ABOUT_PHOTO_SIZE[1] }}">
+{% endif %}
+{% if SITE.about.text %}
+<p>{{ SITE.about.text }}</p>
+{% endif %}
+{% if SITE.about.page %}
+<p class="about__more"><a href="{{ SITE.about.page }}">More about me »</a></p>
+{% endif %}
+{% if SITE.about.links %}
+<ul class="inline-list about__links">
+  {% for link in SITE.about.links %}
+  <li><a href="{{ link.url }}"{% if link.url.startswith('http') %} rel="me"{% endif %}>{{ link.label }}</a></li>
+  {% endfor %}
+</ul>
+{% endif %}

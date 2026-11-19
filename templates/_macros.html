@@ -1,0 +1,148 @@
+{# Shared fragments. Import with: {% import "_macros.html" as m %} #}
+
+{# Small boxed series label: "Running a Small Network · 2/3". #}
+{# overlay=True: plain text for the strip on a list thumbnail, which is
+   itself a link to the post. #}
+{% macro series_label(post, overlay=False) %}
+{% if post.series %}
+{% set full = post.series.name ~ ', part ' ~ post.series_part ~ ' of ' ~ (post.series.posts | length) %}
+{% set short = post.series.name ~ ' · ' ~ post.series_part ~ '/' ~ (post.series.posts | length) %}
+{% if overlay %}
+<span class="series-label series-label--overlay" title="{{ full }}">{{ short }}</span>
+{% else %}
+<a class="series-label" href="{{ post.series.url }}" title="{{ full }}">{{ short }}</a>
+{% endif %}
+{% endif %}
+{% endmacro %}
+
+{# Muted metadata, shared by post lists and post pages. #}
+
+{# Post pages: "November 14, 2026 • 6 min read      [Series · 2/3]"
+   (series label right-aligned).
+   Post lists:  "November 14, 2026 • 6 min read • ssh, operations" #}
+{% macro dateline(post, trailing='series', series_for_readers=False) %}
+<p class="entry__dateline">
+  <time datetime="{{ post.iso_date }}">{{ post.date | longdate }}</time>
+  <span aria-hidden="true">•</span>
+  <span class="entry__readtime">{{ post.reading_time }} min read</span>
+  {% if series_for_readers and post.series %}
+  <span class="visually-hidden">Series: {{ post.series.name }}, part {{ post.series_part }} of {{ post.series.posts | length }}.</span>
+  {% endif %}
+  {% if trailing == 'series' and post.series %}
+  <span class="entry__dateline-end">{{ series_label(post) }}</span>
+  {% elif trailing == 'tags' and post.tags %}
+  <span aria-hidden="true">•</span>
+  <span class="entry__tags">{{ tag_links(post) }}</span>
+  {% endif %}
+</p>
+{% endmacro %}
+
+{# "ssh, operations, security" (labelled "Tags:" for screen readers only) #}
+{% macro tag_links(post) %}
+<span class="visually-hidden">Tags: </span>
+{% for tag in post.tags %}<a href="{{ tag.url }}" rel="tag">{{ tag.name }}</a>{% if not loop.last %}, {% endif %}{% endfor %}
+{% endmacro %}
+
+{% macro tag_line(post) %}
+{% if post.tags %}
+<p class="entry__tags">{{ tag_links(post) }}</p>
+{% endif %}
+{% endmacro %}
+
+{# A post in a list (front page, tag and series pages). Order in the HTML:
+   thumbnail link (with the series label over it), title, info (dateline
+   with tags), summary, footer (series label if there's no thumbnail;
+   Read more button). CSS arranges it per layout (see "Post lists" in styles.css). #}
+{% macro entry(post) %}
+{% set thumb = post.thumbnail %}
+<article class="entry entry--list{% if thumb %} entry--has-thumb entry--thumb-{{ SITE.thumbnail_layout }}{% endif %}">
+  {% if thumb %}
+  {# The thumbnail (with the series as a strip across its bottom) is one
+     link to the post. It repeats the title link, so it's skipped by Tab
+     and screen readers; the series is spelled out in the dateline. #}
+  <a class="entry__media" href="{{ post.url }}" tabindex="-1" aria-hidden="true">
+    <span class="entry__thumb{% if thumb.placeholder %} entry__thumb--placeholder{% elif thumb.svg %} entry__thumb--fit{% endif %}">
+      {{ thumb_img(thumb) }}
+    </span>
+    {{ series_label(post, overlay=True) }}
+  </a>
+  {% endif %}
+  <h2 class="entry__title"><a href="{{ post.url }}" rel="bookmark">{{ post.title }}</a></h2>
+
+  <div class="entry__info">
+    {{ dateline(post, trailing='tags', series_for_readers=thumb and post.series) }}
+  </div>
+
+  <div class="prose">
+    {{ post.summary_html }}
+  </div>
+
+  {% set label_in_footer = not thumb and post.series %}
+  <footer class="entry__footer">
+    {% if label_in_footer %}{{ series_label(post) }}{% endif %}
+    <a class="button entry__more" href="{{ post.url }}">Read more<span class="visually-hidden"> of “{{ post.title }}”</span> »</a>
+  </footer>
+</article>
+{% endmacro %}
+
+{# Small file beside the post on desktop; the large one when the thumbnail
+   spans the width of a phone screen (see styles.css). #}
+{% macro thumb_img(thumb) %}
+<img src="{{ thumb.url }}" alt="" width="{{ thumb.width }}" height="{{ thumb.height }}"
+     {% if thumb.large_url != thumb.url %}srcset="{{ thumb.url }} {{ thumb.small_px }}w, {{ thumb.large_url }} {{ thumb.large_px }}w"
+     sizes="(max-width: 479px) calc(100vw - 42px), 180px"{% endif %} loading="lazy" decoding="async">
+{% endmacro %}
+
+{# A post on its own page: title, dateline, tag line, then the full body. #}
+{% macro full_entry(post, body) %}
+<article class="entry entry--full">
+  <h1 class="entry__title">{{ post.title }}</h1>
+  <header class="entry__header">
+    {{ dateline(post) }}
+    {{ tag_line(post) }}
+  </header>
+
+  <div class="prose">
+    {{ body }}
+  </div>
+</article>
+{% endmacro %}
+
+{# Older/newer (or previous/next in series) button. Renders nothing when
+   there is no target post. direction: 'prev' or 'next'. #}
+{# A two-line post navigation button. Without a target it's still shown,
+   greyed out, with `empty` (e.g. "This is the oldest post") as its title. #}
+{% macro nav_button(target, direction, label, empty) %}
+{% set dir %}{% if direction == 'prev' %}« {% endif %}{{ label }}{% if direction == 'next' %} »{% endif %}{% endset %}
+{% if target %}
+<a class="button post-nav__button post-nav__button--{{ direction }}" href="{{ target.url }}" rel="{{ direction }}" title="{{ target.title }}">
+  <span class="post-nav__dir">{{ dir }}</span>
+  <span class="post-nav__title">{{ target.title }}</span>
+</a>
+{% else %}
+<span class="button post-nav__button post-nav__button--{{ direction }} post-nav__button--none" aria-disabled="true">
+  <span class="post-nav__dir">{{ dir }}</span>
+  <span class="post-nav__title">{{ empty }}</span>
+</span>
+{% endif %}
+{% endmacro %}
+
+{# A paginated post list, plus page buttons when there's more than one
+   page. Labels describe the direction of the list's order. #}
+{% macro entries(pagination, prev_label='Newer posts', next_label='Older posts') %}
+{% for post in pagination.items %}
+{{ entry(post) }}
+{% else %}
+<p>No posts yet.</p>
+{% endfor %}
+{% if pagination.count > 1 %}
+<nav class="pagination" aria-label="Pages">
+  <span class="pagination__prev">{% if pagination.prev_url %}<a class="button" href="{{ pagination.prev_url }}" rel="prev">« {{ prev_label }}</a>{% endif %}</span>
+  <span class="pagination__status">Page {{ pagination.number }} of {{ pagination.count }}</span>
+  <span class="pagination__next">{% if pagination.next_url %}<a class="button" href="{{ pagination.next_url }}" rel="next">{{ next_label }} »</a>{% endif %}</span>
+</nav>
+{% endif %}
+{% endmacro %}
+
+{# " · Page 2" for page titles of paginated lists after the first page. #}
+{% macro page_suffix(pagination) %}{% if pagination.number > 1 %} · Page {{ pagination.number }}{% endif %}{% endmacro %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Page not found · {{ SITE.title }}{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Page Not Found</h1>
+<p>Sorry, there's nothing at this address. It may have moved, or the link may be wrong.</p>
+
+<div id="nf-suggestions" hidden>
+  <p>Did you mean one of these?</p>
+  <ul class="index-list"></ul>
+</div>
+
+<p><a href="/">Go to the latest posts</a></p>
+
+{# GitHub Pages serves this page for any missing path. If the path looks
+   like a post URL with a typo, send the visitor to the post:
+   - the date matches exactly one post (e.g. /2026-10-22/typo/), or
+   - the date matches several posts and one has the right slug, or
+   - the slug matches exactly one post (wrong or missing date).
+   Otherwise, list any near matches. #}
+<script>
+(function () {
+  var posts = {{ post_index | tojson }};
+  var path = decodeURIComponent(location.pathname);
+  var date = (path.match(/(?:^|\/)(\d{4}-\d{2}-\d{2})(?:\/|$)/) || [])[1];
+  var parts = path.split('/').filter(Boolean);
+  var slug = (parts[parts.length - 1] || '').replace(/\.html?$/, '');
+
+  var sameDate = date ? posts.filter(function (p) { return p.date === date; }) : [];
+  var sameSlug = posts.filter(function (p) { return p.slug === slug; });
+  var both = sameDate.filter(function (p) { return p.slug === slug; });
+
+  var target = both.length === 1 ? both[0]
+             : sameDate.length === 1 ? sameDate[0]
+             : !sameDate.length && sameSlug.length === 1 ? sameSlug[0]
+             : null;
+  if (target && target.url !== location.pathname) {
+    location.replace(target.url + location.hash);
+    return;
+  }
+
+  var suggestions = sameDate.length ? sameDate : sameSlug;
+  if (!suggestions.length) return;
+  var box = document.getElementById('nf-suggestions');
+  var list = box.querySelector('ul');
+  suggestions.forEach(function (p) {
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    a.href = p.url;
+    a.textContent = p.title;
+    li.appendChild(a);
+    li.appendChild(document.createTextNode(' (' + p.date + ')'));
+    list.appendChild(li);
+  });
+  box.hidden = false;
+})();
+</script>
+{% endblock %}

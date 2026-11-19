@@ -1,0 +1,87 @@
+/* giscus comments theme for the site's dark theme (see static/styles.css
+   and giscus-theme.css, its light counterpart; keep the two in step).
+   static/comments.js picks this file when the page is dark. Starts from
+   giscus's dark theme and overrides colours, fonts, corners and the
+   primary button. */
+@import url("https://giscus.app/themes/dark.css");
+
+/* The site's body font, from the site itself (relative to this file, so it
+   works once deployed; on the dev server, where this theme is passed inline,
+   it falls back to Helvetica). */
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/IBMPlexSans-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Sans";
+  font-weight: 600 700;
+  font-display: swap;
+  src: url("fonts/IBMPlexSans-Bold.woff2") format("woff2");
+}
+
+main {
+  --color-fg-default: #d5d9de;
+  --color-fg-muted: #98a1ab;
+  --color-fg-subtle: #89929c;
+
+  --color-canvas-default: #1b1e23;
+  --color-canvas-overlay: #23272d;
+  --color-canvas-inset: #23272d;
+  --color-canvas-subtle: #23272d;
+  --color-border-default: #3d434c;
+  --color-border-muted: #343941;
+
+  /* The site's dark-theme blues (--link / --accent). */
+  --color-accent-fg: #82b3ea;
+  --color-accent-emphasis: #4a88d0;
+  --color-accent-muted: rgb(74 136 208 / 0.4);
+  --color-accent-subtle: #1f2a38;
+  --color-scale-blue-1: #2a4466;
+
+  --color-btn-text: #d5d9de;
+  --color-btn-bg: #23272d;
+  --color-btn-hover-bg: #2c3138;
+  --color-btn-primary-text: #ffffff;
+  --color-btn-primary-bg: #164a85;
+  --color-btn-primary-border: #0a2a50;
+  --color-btn-primary-hover-bg: #1a4c88;
+  --color-btn-primary-hover-border: #0a2a50;
+  --color-btn-primary-selected-bg: #123d70;
+  --color-btn-primary-disabled-bg: #2a3f58;
+  --color-btn-primary-disabled-border: #22344a;
+
+  font-family: "IBM Plex Sans", Helvetica, Arial, sans-serif;
+}
+
+/* Keep the boxes' right border inside the frame: the frame is 100% of
+   the post column, which is often a fractional width, and full-width boxes
+   could otherwise lose their 1px right edge to rounding. */
+main {
+  padding-inline: 1px;
+}
+
+/* Square corners, like the rest of the site: everything except avatars
+   (images), and buttons keep the site buttons' slight 2px rounding. */
+main *:not(img) {
+  border-radius: 0 !important;
+}
+main .btn {
+  border-radius: 2px !important;
+}
+
+/* Primary button ("Comment", "Sign in with GitHub"): the site's gradient,
+   lighter at the top. */
+main .btn-primary {
+  background-image: linear-gradient(#3f7fc8, #123d70);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18);
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 0.35);
+}
+main .btn-primary:hover:not(:disabled) {
+  background-image: linear-gradient(#5694da, #1a4c88);
+}
+main .btn-primary:disabled {
+  background-image: none;
+  text-shadow: none;
+}

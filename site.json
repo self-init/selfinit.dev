@@ -1,0 +1,89 @@
+{
+  "title": "self-init",
+  "description": "A cybersecurity student writing about how systems work together securely: OS security, security architecture, AppSec, homelabs and side projects.",
+  "url": "https://williamanderson.dev",
+  "author": "William Anderson",
+  "about": {
+    "text": "I'm a cybersecurity student interested in the technical aspects of how systems work together securely.",
+    "photo": "images/me.jpg",
+    "page": "/about/",
+    "links": [
+      {
+        "label": "GitHub",
+        "url": "https://github.com/self-init"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://linkedin.com/in/william-anderson-cyber"
+      },
+      {
+        "label": "Email",
+        "url": "mailto:me@williamanderson.dev"
+      }
+    ]
+  },
+  "recent_posts": 5,
+  "posts_per_page": 10,
+  "feed_items": 20,
+  "thumbnails": true,
+  "thumbnail_layout": "column",
+  "icons": {
+    "logo": "icons/logo.svg",
+    "favicon": "icons/favicon.svg",
+    "pattern": "icons/pattern.svg"
+  },
+  "nav": [
+    {
+      "label": "Posts",
+      "url": "/",
+      "menu": "recent"
+    },
+    {
+      "label": "Series",
+      "url": "/series/",
+      "menu": "series"
+    },
+    {
+      "label": "Tags",
+      "url": "/tags/",
+      "menu": "tags"
+    },
+    {
+      "label": "About",
+      "url": "/about/"
+    },
+    {
+      "label": "RSS",
+      "url": "/feed.xml"
+    }
+  ],
+  "collections": [
+    {
+      "model": "post",
+      "path": "posts",
+      "url": "/{date}/{slug}/"
+    },
+    {
+      "model": "page",
+      "path": "pages",
+      "url": "/{slug}/"
+    }
+  ],
+  "tags": "tags.json",
+  "series": "series.json",
+  "redirects": "redirects.json",
+  "static": "static",
+  "templates": "templates",
+  "output": "output",
+  "comments": {
+    "repo": "self-init/selfinit.dev",
+    "repo_id": "R_kgDOVyNiUQ",
+    "category": "Blog Post Comments",
+    "category_id": "DIC_kwDOVyNiUc4DLXoC",
+    "reactions": true,
+    "input_position": "top",
+    "lang": "en",
+    "theme": "/giscus-theme.css",
+    "theme_dark": "/giscus-theme-dark.css"
+  }
+}

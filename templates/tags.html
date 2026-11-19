@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Tags · {{ SITE.title }}{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Tags</h1>
+{% if TAGS %}
+<ul class="index-list">
+  {% for tag in TAGS %}
+  <li>
+    <a href="{{ tag.url }}">{{ tag.name }}</a> <span class="count">({{ tag.posts | length }})</span>
+    {% if tag.description %}<p class="index-list__description">{{ tag.description }}</p>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No tags yet.</p>
+{% endif %}
+{% endblock %}

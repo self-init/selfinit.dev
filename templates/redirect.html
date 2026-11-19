@@ -1,0 +1,17 @@
+{# A page left at an old URL (from redirects.json) that forwards visitors.
+   Standalone on purpose: it should never be seen for more than a moment. #}
+{% set absolute = SITE.url ~ target if target.startswith('/') else target %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Moved · {{ SITE.title }}</title>
+  <link rel="canonical" href="{{ absolute }}">
+  <meta name="robots" content="noindex">
+  <meta http-equiv="refresh" content="0; url={{ target }}">
+  <script>location.replace({{ target | tojson }}{% if '#' not in target %} + location.hash{% endif %});</script>
+</head>
+<body>
+  <p>This page has moved to <a href="{{ target }}">{{ absolute }}</a>.</p>
+</body>
+</html>

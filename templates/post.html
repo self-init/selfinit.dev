@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% set sidebar = false %}
+{% import "_macros.html" as m %}
+
+{% block title %}{{ post.title }} · {{ SITE.title }}{% endblock %}
+
+{% block head %}
+{% if COMMENTS and post.model.comments %}
+<script src="/comments.js" defer></script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{{ m.full_entry(post, post.html) }}
+
+{% if SITE.about.text or ABOUT_PHOTO %}
+<aside class="author-box about" aria-label="About the author">
+  <h2 class="author-box__title">About the author</h2>
+  {% include "_about.html" %}
+</aside>
+{% endif %}
+
+{% if COMMENTS and post.model.comments %}
+{# giscus comments (GitHub Discussions). Nothing loads until the reader
+   clicks the button (static/comments.js). Posts with `discussion: N` show
+   that existing discussion; others are matched by their path, and giscus
+   creates the discussion on the first comment. #}
+{% set giscus = {
+  'repo': COMMENTS.repo, 'repoId': COMMENTS.repo_id,
+  'category': COMMENTS.category, 'categoryId': COMMENTS.category_id,
+  'mapping': 'number' if post.model.discussion else 'pathname',
+  'term': (post.model.discussion | string) if post.model.discussion else '',
+  'reactions': COMMENTS.reactions, 'inputPosition': COMMENTS.input_position,
+  'lang': COMMENTS.lang, 'theme': COMMENTS.theme, 'themeDark': COMMENTS.theme_dark, 'siteUrl': SITE.url,
+} %}
+<section class="comments" id="comments" aria-label="Comments">
+  {# Shown by comments.js; without JavaScript the <noscript> text appears instead. #}
+  <button type="button" class="button comments__load" hidden>Load comments <span class="comments__powered">(powered by giscus)</span></button>
+  <div class="giscus" data-giscus='{{ giscus | tojson }}' hidden></div>
+  <noscript>
+    <p>Comments are powered by <a href="https://giscus.app">giscus</a> and need JavaScript.
+      You can also read them on <a href="https://github.com/{{ COMMENTS.repo }}/discussions{% if post.model.discussion %}/{{ post.model.discussion }}{% endif %}">GitHub</a>.</p>
+  </noscript>
+</section>
+{% endif %}
+
+{# After the post: the series box (the parts list is collapsed into a
+   <details>; "Continue" stays visible, greyed out on the latest part), then older/newer buttons. #}
+{% if post.series or post.older or post.newer %}
+<nav class="read-next" aria-label="Post navigation">
+  {% if post.series %}
+  {% set parts = post.series.posts | length %}
+  <section class="series-card" aria-label="Series">
+    <header class="series-card__head">
+      <a class="series-card__name" href="{{ post.series.url }}">{{ post.series.name }}</a>
+      <span class="series-card__count">Series · Part {{ post.series_part }} of {{ parts }}</span>
+    </header>
+    <div class="series-card__body">
+      <details class="series-card__parts">
+        <summary><span class="series-card__show">Show all {{ parts }} part{{ 's' if parts != 1 }}</span><span class="series-card__hide">Hide parts</span></summary>
+        <ol>
+          {% for part in post.series.posts %}
+          {% if part.url == post.url %}
+          <li aria-current="page"><strong>{{ part.title }}</strong></li>
+          {% else %}
+          <li><a href="{{ part.url }}">{{ part.title }}</a></li>
+          {% endif %}
+          {% endfor %}
+        </ol>
+      </details>
+      {% if post.series_next %}
+      <a class="button series-card__continue" href="{{ post.series_next.url }}" rel="next">Continue to part {{ post.series_part + 1 }} »</a>
+      {% else %}
+      <span class="button series-card__continue" aria-disabled="true">No next part yet</span>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+  {% if post.older or post.newer %}
+  <div class="read-next__buttons">
+    {{ m.nav_button(post.older, 'prev', 'Older post', 'This is the oldest post') }}
+    {{ m.nav_button(post.newer, 'next', 'Newer post', 'This is the newest post') }}
+  </div>
+  {% endif %}
+</nav>
+{% endif %}
+{% endblock %}
